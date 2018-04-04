@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180404222330) do
+ActiveRecord::Schema.define(version: 20180404223848) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 20180404222330) do
   create_table "transactions", force: :cascade do |t|
     t.date "date"
     t.text "category"
-    t.integer "amount"
+    t.float "amount"
     t.text "note"
     t.boolean "is_income", default: false
     t.datetime "created_at", null: false
