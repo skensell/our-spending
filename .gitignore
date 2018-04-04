@@ -13,6 +13,7 @@
 
 # Ignore RubyMine output
 .idea
+/test/*
 
 # Ignore all logfiles and tempfiles.
 /log/*
