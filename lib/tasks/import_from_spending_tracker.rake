@@ -18,7 +18,6 @@ namespace :ourspending do
       amount = amount.strip.to_f
       note = note.strip
       t = Transaction.new
-      puts day
       t.date = Date.strptime(day, '%m/%d/%Y')
       t.category = category
       if amount > 0
