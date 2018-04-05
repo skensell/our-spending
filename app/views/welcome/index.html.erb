@@ -2,14 +2,53 @@
 
   <div class="row">
     <div class="col-sm-12">
-      <h3>Our Spending</h3>
+      <h3>All Spending</h3>
+      <p>Showing data from <%= @months_involved.first %> to <%= @months_involved.last %>.</p>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-sm-12">
-      <h4>Month Totals</h4>
+    <div class="col-sm-6">
+      <h4>All Expenses</h4>
       <%= line_chart Transaction.amount_spent_by_month(), min: 4000, max: 10000 %>
+    </div>
+    <div class="col-sm-6">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2 class="panel-title">Yearly Budgeted Categories</h2>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-sm-12">
+
+                  <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                      <th>Category</th>
+                      <th>Total Spent</th>
+                      <th>Monthly Average</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% Transaction.expenses.budgeted_yearly.group(:category).sum(:amount).each do |category,amount| %>
+                        <tr>
+                          <td><%= category %></td>
+                          <td><%= number_to_currency(amount, precision: 0) %></td>
+                          <td><%= number_to_currency(amount/@total_months, precision: 0) %></td>
+                        </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
