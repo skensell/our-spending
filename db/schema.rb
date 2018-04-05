@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180404223848) do
+ActiveRecord::Schema.define(version: 20180405222400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,9 @@ ActiveRecord::Schema.define(version: 20180404223848) do
     t.boolean "is_income", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_outlier", default: false
+    t.boolean "is_budgeted_yearly", default: false
+    t.index ["is_outlier"], name: "index_transactions_on_is_outlier"
   end
 
 end
