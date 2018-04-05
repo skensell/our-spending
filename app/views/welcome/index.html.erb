@@ -1,0 +1,16 @@
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-sm-12">
+      <h3>Our Spending</h3>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <h4>Month Totals</h4>
+      <%= line_chart Transaction.amount_spent_by_month(), min: 4000, max: 10000 %>
+    </div>
+  </div>
+
+</div>
