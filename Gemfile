@@ -33,6 +33,8 @@ gem 'jbuilder', '~> 2.5'
 gem 'groupdate' # for easier data visualization
 gem 'chartkick' # for easier data visualization
 gem 'momentjs-rails', '~> 2.17' # for JS time manipulation and rendering
+gem 'bootstrap', '~> 4.0.0'
+gem 'jquery-rails'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
