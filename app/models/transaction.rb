@@ -1,6 +1,6 @@
 class Transaction < ApplicationRecord
 
-  CATEGORIES_BUDGETED_YEARLY = ['Cats', 'Home Furnishing', 'Medical Bills', 'Plane tickets', 'Special Occasion']
+  CATEGORIES_BUDGETED_YEARLY = ['Cats', 'Home Furnishing', 'Medical Bills', 'Plane tickets', 'Special Occassion']
 
   scope :expenses, -> {where(is_income: false)}
   scope :budgeted_monthly, -> {where(is_budgeted_yearly: false)}
@@ -9,8 +9,8 @@ class Transaction < ApplicationRecord
 
   def self.amount_spent_by_month
     [
-        {name: 'All Categories', data: self.expenses.grouped_by_last_12_months.sum(:amount).zeros_removed},
-        {name: 'Monthly Categories', data: self.expenses.budgeted_monthly.grouped_by_last_12_months.sum(:amount).zeros_removed},
+        {name: 'All', data: self.expenses.grouped_by_last_12_months.sum(:amount).zeros_removed},
+        {name: 'Budgeted Monthly', data: self.expenses.budgeted_monthly.grouped_by_last_12_months.sum(:amount).zeros_removed},
     ]
   end
 

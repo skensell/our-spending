@@ -1,55 +1,114 @@
+<% yearlies = Transaction.expenses.budgeted_yearly.group(:category).sum(:amount) %>
+<% yearlies_total = yearlies.inject(0) {|acc, (k, v)| acc += v; acc} %>
+<% monthlies = Transaction.expenses.budgeted_monthly.group(:category).sum(:amount) %>
+<% monthlies_total = monthlies.inject(0) {|acc, (k, v)| acc += v; acc} %>
+<% all_categories_total = yearlies_total + monthlies_total %>
+<% total_months = @total_months %>
+
+
 <div class="container-fluid">
 
   <div class="row">
-    <div class="col-sm-12">
-      <h3>All Spending</h3>
-      <p>Showing data from <%= @months_involved.first %> to <%= @months_involved.last %>.</p>
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col-sm-6">
-      <h4>All Expenses</h4>
-      <%= line_chart Transaction.amount_spent_by_month(), min: 4000, max: 10000 %>
-    </div>
     <div class="col-sm-6">
       <div class="row">
         <div class="col-sm-12">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h2 class="panel-title">Yearly Budgeted Categories</h2>
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">Spending</h3>
+              <p class="card-text">Expenses per month.</p>
+              <%= line_chart Transaction.amount_spent_by_month(), min: 4000, max: 10000 %>
             </div>
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-sm-12">
-
-                  <table class="table table-condensed">
-                    <thead>
-                    <tr>
-                      <th>Category</th>
-                      <th>Total Spent</th>
-                      <th>Monthly Average</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <% Transaction.expenses.budgeted_yearly.group(:category).sum(:amount).each do |category,amount| %>
-                        <tr>
-                          <td><%= category %></td>
-                          <td><%= number_to_currency(amount, precision: 0) %></td>
-                          <td><%= number_to_currency(amount/@total_months, precision: 0) %></td>
-                        </tr>
-                    <% end %>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>
-
     </div>
+
+    <div class="col-sm-6">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">Categories</h3>
+
+              <table class="table table-condensed">
+                <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Total</th>
+                  <th>Monthly</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td><b>All</b></td>
+                  <td><b><%= to_dollars(all_categories_total) %></b></td>
+                  <td><b><%= to_dollars(all_categories_total/total_months) %></b></td>
+                </tr>
+                </tbody>
+              </table>
+
+
+              <br/>
+              <p class="card-text"><b>Yearlies.</b> The less expected expenses.</p>
+
+              <table class="table table-condensed">
+                <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Total</th>
+                  <th>Monthly</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% yearlies.sort_by {|k,v| -v }.each do |category,amount| %>
+                    <tr>
+                      <td><%= category %></td>
+                      <td><%= to_dollars(amount) %></td>
+                      <td><%= to_dollars(amount/total_months) %></td>
+                    </tr>
+                <% end %>
+                <tr>
+                  <td><b>All Yearlies</b></td>
+                  <td><b><%= to_dollars(yearlies_total) %></b></td>
+                  <td><b><%= to_dollars(yearlies_total/total_months) %></b></td>
+                </tr>
+                </tbody>
+              </table>
+
+              <br/>
+              <p class="card-text"><b>Monthlies.</b> The more expected expenses.</p>
+              <table class="table table-condensed">
+                <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Total</th>
+                  <th>Monthly</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% monthlies = Transaction.expenses.budgeted_monthly.group(:category).sum(:amount) %>
+                <% monthlies.sort_by {|k,v| -v }.each do |category,amount| %>
+                    <tr>
+                      <td><%= category %></td>
+                      <td><%= to_dollars(amount) %></td>
+                      <td><%= to_dollars(amount/total_months) %></td>
+                    </tr>
+                <% end %>
+                <tr>
+                  <td><b>All Monthlies</b></td>
+                  <td><b><%= to_dollars(monthlies_total) %></b></td>
+                  <td><b><%= to_dollars(monthlies_total/total_months) %></b></td>
+                </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </div>
