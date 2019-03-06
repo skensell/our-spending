@@ -1,12 +1,47 @@
-<% yearlies = Transaction.expenses.budgeted_yearly.group(:category).sum(:amount) %>
+<% yearlies = @transactions.budgeted_yearly.group(:category).sum(:amount) %>
 <% yearlies_total = yearlies.inject(0) {|acc, (k, v)| acc += v; acc} %>
-<% monthlies = Transaction.expenses.budgeted_monthly.group(:category).sum(:amount) %>
+<% monthlies = @transactions.budgeted_monthly.group(:category).sum(:amount) %>
 <% monthlies_total = monthlies.inject(0) {|acc, (k, v)| acc += v; acc} %>
 <% all_categories_total = yearlies_total + monthlies_total %>
 <% total_months = @total_months %>
 
 
 <div class="container-fluid">
+
+  <div class="row">
+
+    <div class="col-sm-12">
+
+      <%=  form_for @search_params, { url: root_path(), method: :get } do |f| %>
+          <p>
+            From
+            <%= f.select(:start_month,
+                         [['January', 1], ['February', 2], ['March', 3], ['April', 4], ['May', 5], ['June', 6],
+                          ['July', 7], ['August', 8], ['September', 9], ['October', 10], ['November', 11], ['December', 12]],
+                         {},
+                         {multiple: false, class: 'input-group-btn'}) %>
+            <%= f.select(:start_year,
+                         [2017, 2018, 2019],
+                         {},
+                         {multiple: false, class: 'input-group-btn'}) %>
+            To
+            <%= f.select(:end_month,
+                         [['January', 1], ['February', 2], ['March', 3], ['April', 4], ['May', 5], ['June', 6],
+                          ['July', 7], ['August', 8], ['September', 9], ['October', 10], ['November', 11], ['December', 12]],
+                         {},
+                         {multiple: false, class: 'input-group-btn'}) %>
+            <%= f.select(:end_year,
+                         [2017, 2018, 2019],
+                         {},
+                         {multiple: false, class: 'input-group-btn'}) %>
+            <%= f.submit "Search" %>
+          </p>
+      <% end %>
+
+    </div>
+
+  </div>
+
 
   <div class="row">
 
@@ -17,7 +52,7 @@
             <div class="card-body">
               <h3 class="card-title">Spending</h3>
               <p class="card-text">Expenses per month.</p>
-              <%= line_chart Transaction.amount_spent_by_month(), min: 4000, max: 10000 %>
+              <%= line_chart @line_chart_data, min: 4000, max: 10000 %>
             </div>
           </div>
         </div>

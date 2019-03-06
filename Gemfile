@@ -35,6 +35,7 @@ gem 'chartkick' # for easier data visualization
 gem 'momentjs-rails', '~> 2.17' # for JS time manipulation and rendering
 gem 'bootstrap', '~> 4.0.0'
 gem 'jquery-rails'
+gem "bootstrap_form", ">= 4.1.0"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
