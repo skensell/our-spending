@@ -5,7 +5,11 @@ class Transaction < ApplicationRecord
   scope :expenses, -> {where(is_income: false)}
   scope :budgeted_monthly, -> {where(is_budgeted_yearly: false)}
   scope :budgeted_yearly, -> {where(is_budgeted_yearly: true)}
-  scope :grouped_by_last_12_months, -> {group_by_month(:date, last: 12)}
+  scope :grouped_by_last_12_months, -> {
+    max_date = Transaction.maximum(:date).at_end_of_month
+    min_date = (max_date - 11.months).at_beginning_of_month
+    group_by_month(:date, range: (min_date..max_date))
+  }
 
   def self.amount_spent_by_month
     [
