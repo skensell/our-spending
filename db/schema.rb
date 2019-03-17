@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190317225720) do
+ActiveRecord::Schema.define(version: 20190317230342) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,16 @@ ActiveRecord::Schema.define(version: 20190317225720) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.bigint "bucket_id"
+    t.boolean "is_income", default: false
+    t.float "budget"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bucket_id"], name: "index_categories_on_bucket_id"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -34,4 +44,5 @@ ActiveRecord::Schema.define(version: 20190317225720) do
     t.index ["is_outlier"], name: "index_transactions_on_is_outlier"
   end
 
+  add_foreign_key "categories", "buckets"
 end
