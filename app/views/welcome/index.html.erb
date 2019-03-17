@@ -6,35 +6,85 @@
 <% total_months = @total_months %>
 
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+  <a class="navbar-brand">Our Spending</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarFilterDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Filter
+        </a>
+        <div class="dropdown-menu" style="min-width: 300px">
+          <%=  form_for @search_params, { url: root_path(), method: :get, html: { class: 'px-4 py-3'} } do |f| %>
+
+              <!--<p><b>Dates</b></p>-->
+              <!-- From -->
+              <div class="form-row align-items-center mb-2">
+                <div class="col-sm-2">
+                  <%= f.label :start_month, 'From', {class: 'my-0'} %>
+                </div>
+                <div class="col-sm-6">
+                  <%= f.select(:start_month,
+                               months_enumerated,
+                               {},
+                               {multiple: false, class: 'form-control'}) %>
+                </div>
+                <div class="col-sm-4">
+                  <%= f.select(:start_year,
+                               [2017, 2018, 2019],
+                               {},
+                               {multiple: false, class: 'form-control'}) %>
+                </div>
+              </div>
+
+              <!-- To -->
+              <div class="form-row align-items-center mb-4">
+                <div class="col-sm-2">
+                  <%= f.label :end_month, 'To', {class: 'my-0'} %>
+                </div>
+                <div class="col-sm-6">
+                  <%= f.select(:end_month,
+                               months_enumerated,
+                               {},
+                               {multiple: false, class: 'form-control'}) %>
+                </div>
+                <div class="col-sm-4">
+                  <%= f.select(:end_year,
+                               [2017, 2018, 2019],
+                               {},
+                               {multiple: false, class: 'form-control'}) %>
+                </div>
+              </div>
+
+              <div class="dropdown-divider"></div>
+
+
+
+              <div class="form-row">
+                <div class="col-sm form-group">
+                  <%= f.submit "Apply", class: 'btn btn-outline-success', style: 'width: 100%' %>
+                </div>
+              </div>
+          <% end %>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Display</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
 <div class="container-fluid">
 
   <div class="row">
 
     <div class="col-sm-12">
       <h2><%= month_name(@search_params.start_month) + " #{@search_params.start_year}" %> - <%= month_name(@search_params.end_month) + " #{@search_params.end_year}" %></h2>
-      <%=  form_for @search_params, { url: root_path(), method: :get } do |f| %>
-          <p>From
-            <%= f.select(:start_month,
-                         months_enumerated,
-                         {},
-                         {multiple: false, class: 'input-group-btn'}) %>
-            <%= f.select(:start_year,
-                         [2017, 2018, 2019],
-                         {},
-                         {multiple: false, class: 'input-group-btn'}) %>
-            to
-            <%= f.select(:end_month,
-                         months_enumerated,
-                         {},
-                         {multiple: false, class: 'input-group-btn'}) %>
-            <%= f.select(:end_year,
-                         [2017, 2018, 2019],
-                         {},
-                         {multiple: false, class: 'input-group-btn'}) %>
-            <%= f.submit "View Transactions" %>
-          </p>
-      <% end %>
-
     </div>
 
   </div>
@@ -84,7 +134,7 @@
               <br/>
               <p class="card-text"><b>Yearlies.</b> The less expected expenses.</p>
 
-              <table class="table table-condensed">
+              <table class="table table-sm">
                 <thead>
                 <tr>
                   <th>Category</th>
@@ -119,7 +169,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% monthlies = Transaction.expenses.budgeted_monthly.group(:category).sum(:amount) %>
                 <% monthlies.sort_by {|k,v| -v }.each do |category,amount| %>
                     <tr>
                       <td><%= category %></td>
