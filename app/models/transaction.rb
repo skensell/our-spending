@@ -13,13 +13,13 @@ class Transaction < ApplicationRecord
   }
 
   def self.from_search_params(p)
-    self.expenses.between(p.min_date, p.max_date)
+    self.expenses.between(p.min_date, p.max_date).where(category: Category.where(id: p.category_ids).pluck(:name))
   end
 
   def self.data_for_monthly_line_graph(p)
     [
-        {name: 'All', data: self.from_search_params(p).group_by_month(:date).sum(:amount).zeros_removed},
-        {name: 'Budgeted Monthly', data: self.from_search_params(p).budgeted_monthly.group_by_month(:date).sum(:amount).zeros_removed},
+        {name: 'All', data: self.from_search_params(p).group_by_month(:date).sum(:amount)},
+        {name: 'Budgeted Monthly', data: self.from_search_params(p).budgeted_monthly.group_by_month(:date).sum(:amount)},
     ]
   end
 

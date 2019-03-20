@@ -1,7 +1,10 @@
 class TransactionSearchParams
   include ActiveModel::Model
+
   attr_accessor :start_month, :start_year,
                 :end_month, :end_year
+
+  attr_accessor :category_ids
 
   attr_reader :min_date, :max_date
 

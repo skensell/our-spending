@@ -57,10 +57,18 @@
                 </div>
               </div>
 
-              
+
               <div class="dropdown-divider"></div>
 
-
+              <div class="form-row align-items-top mb-4">
+                <div class="col-sm">
+                  <%= f.label :category_ids, 'Select Categories' %>
+                  <%= f.select :category_ids,
+                               option_groups_from_collection_for_select(Bucket.expenses, :categories, :name, :id, :name, @search_params.category_ids),
+                               {label: 'Categories'},
+                               {multiple: true, class: 'form-control form-control-sm', size: 10} %>
+                </div>
+              </div>
 
               <div class="form-row">
                 <div class="col-sm form-group">
@@ -78,15 +86,6 @@
 </nav>
 
 <div class="container-fluid">
-
-  <div class="row">
-
-    <div class="col-sm-12">
-      <h2><%= month_name(@search_params.start_month) + " #{@search_params.start_year}" %> - <%= month_name(@search_params.end_month) + " #{@search_params.end_year}" %></h2>
-    </div>
-
-  </div>
-
 
   <div class="row">
 
@@ -120,9 +119,8 @@
         <div class="col-sm-12">
           <div class="card">
             <div class="card-body">
-              <h3 class="card-title">Spending</h3>
-              <p class="card-text">Expenses per month.</p>
-              <%= line_chart @line_chart_data, min: 4000, max: 10000 %>
+              <h3 class="card-title">Spending per month</h3>
+              <%= line_chart @line_chart_data, min: (@line_chart_data[1][:data].values.min || 0), max: @line_chart_data.first[:data].values.max %>
             </div>
           </div>
         </div>
