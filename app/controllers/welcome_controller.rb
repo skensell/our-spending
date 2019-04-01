@@ -8,7 +8,7 @@ class WelcomeController < ApplicationController
     @transactions = Transaction.from_search_params(@search_params)
     @amounts_by_month = @transactions.group_by_month(:date).sum(:amount)
     @total_months = @amounts_by_month.count
-    @line_chart_data = Transaction.data_for_monthly_line_graph(@search_params)
+    @line_chart_data = Transaction.line_graph_data_from_search_params(@search_params)
   end
 
   private

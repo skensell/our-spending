@@ -1,6 +1,8 @@
-<% all_categories = @transactions.group(:category).sum(:amount) %>
-<% all_categories_total = all_categories.inject(0) {|acc, (k, v)| acc += v; acc} %>
 <% total_months = @total_months %>
+<% categories_and_amounts = @transactions.group(:category).sum(:amount).sort_by {|c,a| -a } %>
+<% categories_and_avg_amounts = categories_and_amounts.map {|c,a| [c,a/total_months] } %>
+<% total_amount = categories_and_amounts.inject(0) {|acc, (c, a)| acc += a; acc} %>
+<% chronological_transactions = @transactions.order(date: :asc).limit(2000) %>
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
@@ -89,20 +91,21 @@
 
   <div class="row">
 
+    <!-- Categories table -->
     <div class="col-sm-3">
       <div class="row">
         <div class="col-sm-12">
           <div class="card">
             <div class="card-body">
               <h3 class="card-title">Categories</h3>
-              <p class="card-text"><b><%= to_dollars(all_categories_total/total_months) %></b> spent per month.</p>
+              <p class="card-text"><b><%= to_dollars(total_amount/total_months) %></b> spent per month.</p>
 
               <table class="table table-sm">
                 <tbody>
-                <% all_categories.sort_by {|k,v| -v }.each do |category,amount| %>
+                <% categories_and_avg_amounts.each do |category,amount| %>
                     <tr>
                       <td><%= category %></td>
-                      <td><%= to_dollars(amount/total_months) %></td>
+                      <td><%= to_dollars(amount) %></td>
                     </tr>
                 <% end %>
                 </tbody>
@@ -113,18 +116,79 @@
         </div>
       </div>
     </div>
+    <!-- end Categories table -->
 
-    <div class="col-sm-6">
-      <div class="row">
+
+    <div class="col-sm-9">
+
+      <!--line graph-->
+      <div class="row mb-2">
         <div class="col-sm-12">
           <div class="card">
             <div class="card-body">
-              <h3 class="card-title">Spending per month</h3>
-              <%= line_chart @line_chart_data, min: (@line_chart_data[1][:data].values.min || 0), max: @line_chart_data.first[:data].values.max %>
+              <h3 class="card-title">Over time</h3>
+              <%= line_chart @line_chart_data, min: (@line_chart_data.first[:data].values.min.to_i || 0), max: @line_chart_data.first[:data].values.max.to_i %>
             </div>
           </div>
         </div>
       </div>
+      <!--end line graph-->
+
+      <!--bar chart-->
+      <div class="row mb-2">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">Bars</h3>
+              <%= bar_chart categories_and_avg_amounts %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--end bar chart-->
+
+      <!--pie chart-->
+      <div class="row mb-2">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">Pie</h3>
+              <%= pie_chart categories_and_avg_amounts %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--end pie chart-->
+
+      <!-- Transactions table -->
+      <div class="row mb-2">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">All Transactions</h3>
+              <p class="card-text">Showing all <%= chronological_transactions.count %> transactions chronologically.</p>
+
+              <table class="table table-sm">
+                <tbody>
+                <% chronological_transactions.each do |t| %>
+                    <tr>
+
+                      <td><%= t.date %></td>
+                      <td><%= to_dollars(t.amount) %></td>
+                      <td style="max-width: 200px"><%= t.note %></td>
+                      <td><%= t.category %></td>
+                    </tr>
+                <% end %>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end Transactions table -->
+
+
     </div>
 
   </div>

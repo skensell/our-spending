@@ -16,10 +16,21 @@ class Transaction < ApplicationRecord
     self.expenses.between(p.min_date, p.max_date).where(category: Category.where(id: p.category_ids).pluck(:name))
   end
 
-  def self.data_for_monthly_line_graph(p)
-    [
-        {name: 'All', data: self.from_search_params(p).group_by_month(:date).sum(:amount)},
-        {name: 'Budgeted Monthly', data: self.from_search_params(p).budgeted_monthly.group_by_month(:date).sum(:amount)},
+  def self.line_graph_data_from_search_params(p)
+    data = self.from_search_params(p).group_by_month(:date).sum(:amount)
+    if data.length == 1
+      # only one month requested, show cumulative transaction sum
+      amounts_by_day = self.from_search_params(p).group_by_day(:date).sum(:amount)
+      cumulative_amounts = {}
+      sum = 0
+      for (k, v) in amounts_by_day do
+        sum += v
+        cumulative_amounts[k] = sum
+      end
+      data = cumulative_amounts
+    end
+    return [
+        {name: 'All Expenses', data: data}
     ]
   end
 
